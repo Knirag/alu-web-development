@@ -2,7 +2,7 @@ body {
     position: relative;
     width: 1440px;
     height: 3718px;
-    background-color: aliceblue;
+    background-color: rgb(248, 145, 229);
 }
 
 /* header menu */
@@ -44,7 +44,7 @@ header {
     font-weight: 700;
     font-size: 12px;
     line-height: 15px;
-    color: red;
+    color: rgb(241, 21, 164);
     /* identical to box height */
 
 
