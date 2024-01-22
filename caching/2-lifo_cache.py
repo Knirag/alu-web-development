@@ -7,14 +7,22 @@ from base_caching import BaseCaching
 
 
 class LIFOCache(BaseCaching):
-    """ LIFOCache defines an LIFO algorithm for caching.
-    """
+    """LIFOCache defines an LIFO algorithm for caching."""
 
     def __init__(self):
-        """ Initialize the cache.
-        """
+        """Initialize the cache."""
         super().__init__()
         self.least_recent = []
+
+    def print_cache(self):
+        """Print the cache content."""
+        if not self.cache_data:
+            print("Current cache:")
+            return
+
+        print("Current cache:")
+        for key, value in self.cache_data.items():
+            print("{}: {}".format(key, value))
 
     def put(self, key, item):
         """
@@ -33,7 +41,9 @@ class LIFOCache(BaseCaching):
                     last_key_index = len(keys_to_discard) - 1
                     key_to_discard = keys_to_discard[last_key_index]
                     del self.cache_data[key_to_discard]
-                    print("DISCARD: {}".format(keys_to_discard[last_key_index]))
+                    print("DISCARD: {}".format(
+                        keys_to_discard[last_key_index]
+                        ))
             else:
                 del self.cache_data[key]
 
