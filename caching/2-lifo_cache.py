@@ -12,7 +12,6 @@ class LIFOCache(BaseCaching):
     def __init__(self):
         """Initialize the cache."""
         super().__init__()
-        self.least.recent = []
 
     def put(self, key, item):
         """
