@@ -12,7 +12,7 @@ class LIFOCache(BaseCaching):
     def __init__(self):
         """Initialize the cache."""
         super().__init__()
-        self.most.recent = []
+        self.least.recent = []
 
     def put(self, key, item):
         """
@@ -37,10 +37,10 @@ class LIFOCache(BaseCaching):
                 del self.cache_data[key]
 
             if key in self.most_recent:
-                self.most_recent.remove(key)
-                self.most_recent.append(key)
+                self.least_recent.remove(key)
+                self.least_recent.append(key)
             else:
-                self.most_recent.append(key)
+                self.least_recent.append(key)
 
             self.cache_data[key] = item
 
