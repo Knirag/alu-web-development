@@ -21,7 +21,7 @@ class MRUCache(BaseCaching):
             key: Key for the cache.
             item: Value associated with the key.
         """
-        if key is notNone and item is not None:
+        if key is not None and item is not None:
             value_cache = self.get(key)
             # Make a new entry if key doesn't exist
             if value_cache is None:
