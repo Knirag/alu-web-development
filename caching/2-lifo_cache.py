@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-3-main
+LIFO module
 """
 from base_caching import BaseCaching
 
