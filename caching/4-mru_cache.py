@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-MRUCache 
+MRUCache
 """
 from base_caching import BaseCaching
 
