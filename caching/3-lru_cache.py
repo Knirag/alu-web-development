@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" 
+"""
 BaseCache module
 """
 from base_caching import BaseCaching
@@ -21,7 +21,7 @@ class LRUCache(BaseCaching):
             key: Key for the cache.
             item: Value associated with the key.
         """
-        if key or item is not None:
+        if key is not None and item is not None:
             value_cache = self.get(key)
             # Make a new entry if key doesn't exist
             if value_cache is None:
