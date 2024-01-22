@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """ 1-main """
 from base_caching import BaseCaching
+
+
 class FIFOCache(BaseCaching):
     """ FIFOCache defines a FIFO algorithm for caching.
     """
