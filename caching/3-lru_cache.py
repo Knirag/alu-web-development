@@ -4,12 +4,10 @@ from base_caching import BaseCaching
 
 
 class LRUCache(BaseCaching):
-    """ LRUCache defines an LRU algorithm for caching.
-    """
+    """LRUCache defines an LRU algorithm for caching."""
 
     def __init__(self):
-        """ Initialize the cache.
-        """
+        """Initialize the cache."""
         super().__init__()
         self.least_recent = []
 

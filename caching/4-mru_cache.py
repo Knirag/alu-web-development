@@ -6,12 +6,10 @@ from base_caching import BaseCaching
 
 
 class MRUCache(BaseCaching):
-    """ MRUCache defines an MRU algorithm for caching.
-    """
+    """MRUCache defines an MRU algorithm for caching."""
 
     def __init__(self):
-        """ Initialize the cache.
-        """
+        """Initialize the cache."""
         super().__init__()
         self.most_recent = []
 

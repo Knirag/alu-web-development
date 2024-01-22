@@ -4,12 +4,10 @@ from base_caching import BaseCaching
 
 
 class FIFOCache(BaseCaching):
-    """ FIFOCache defines a FIFO algorithm for caching.
-    """
+    """FIFOCache defines a FIFO algorithm for caching."""
 
     def __init__(self):
-        """ Initialize the cache.
-        """
+        """Initialize the cache."""
         super().__init__()
 
     def put(self, key, item):

@@ -4,12 +4,10 @@ from base_caching import BaseCaching
 
 
 class LIFOCache(BaseCaching):
-    """ LIFOCache defines a LIFO algorithm for caching.
-    """
+    """LIFOCache defines a LIFO algorithm for caching."""
 
     def __init__(self):
-        """ Initialize the cache.
-        """
+        """Initialize the cache."""
         super().__init__()
 
     def put(self, key, item):
@@ -28,8 +26,7 @@ class LIFOCache(BaseCaching):
                     keys_to_discard = list(self.cache_data.keys())
                     last_key_index = len(keys_to_discard) - 1
                     del self.cache_data[keys_to_discard[last_key_index]]
-                    print("DISCARD: {}".format(
-                        keys_to_discard[last_key_index]))
+                    print("DISCARD: {}".format(keys_to_discard[last_key_index]))
             # If the key already exists, delete it before updating
             else:
                 del self.cache_data[key]
