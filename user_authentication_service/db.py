@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This file defines a `DB` class for interacting with a database
+This module provides a `DB` class for interacting with a database
 using Object-Relational Mapping (ORM).
 """
 
@@ -9,7 +9,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import InvalidRequestError, NoResultFound
-from typing import TypeVar
+from typing import Dict
 
 from user import Base
 from user import User
@@ -18,7 +18,7 @@ from user import User
 class DB:
     """
     Represents a database connection and provides methods for interacting
-    with user data using SQLAlchemy ORM.
+    with user data in the 'users' table.
     """
 
     def __init__(self):
@@ -57,26 +57,30 @@ class DB:
         self.session.commit()
         return user
 
-    def find_user_by(self, **kwargs) -> User:
+    def find_user_by(self, kwargs: Dict[str, str]) -> User:
         """
-        Finds a user based on keyword arguments matching user table columns.
+        Finds a user based on a dictionary of search criteria
+        matching user table columns.
 
         Args:
-            **kwargs: Keyword arguments representing user attributes (e.g., id=1, email="user@example.com").
+            kwargs (Dict[str, str]): A dictionary containing key-value pairs
+                where the key represents the user attribute and the value
+                represents the search value.
 
         Returns:
             User: The first user matching the provided criteria.
 
         Raises:
-            InvalidRequestError: If no keyword arguments are provided.
-            ValueError: If an invalid keyword argument is provided (not a user table column).
+            InvalidRequestError: If no search criteria are provided.
+            ValueError: If an invalid search criterion is provided (not a user table column).
             NoResultFound: If no user is found matching the criteria.
         """
         if not kwargs:
             raise InvalidRequestError("No search criteria provided.")
 
+        valid_keys = {"id", "email", "hashed_password", "session_id", "reset_token"}
         for key in kwargs.keys():
-            if key not in User.__table__.columns.keys():
+            if key not in valid_keys:
                 raise ValueError(f"Invalid search criteria: {key}")
 
         user = self.session.query(User).filter_by(**kwargs).first()
@@ -86,24 +90,27 @@ class DB:
 
         return user
 
-    def update_user(self, user_id: int, **kwargs) -> None:
+    def update_user(self, user_id: int, kwargs: Dict[str, str]) -> None:
         """
-        Updates a user's attributes based on the provided user ID and keyword arguments.
+        Updates a user's attributes based on the provided user ID and a dictionary
+        of key-value pairs representing the updates.
 
         Args:
             user_id (int): The ID of the user to update.
-            **kwargs: Keyword arguments representing user attributes to update (e.g., email="new_email@example.com").
+            kwargs (Dict[str, str]): A dictionary containing key-value pairs
+                where the key represents the user attribute to update and the value
+                represents the new value.
 
         Raises:
-            ValueError: If an invalid keyword argument is provided (not a user table column).
+            ValueError: If an invalid update criterion is provided (not a user table column).
         """
-        user = self.find_user_by(id=user_id)
+        user_to_update = self.find_user_by(id=user_id)
 
-        for key in kwargs.keys():
-            if key not in User.__table__.columns.keys():
+        valid_keys = {"id", "email", "hashed_password", "session_id", "reset_token"}
+        for key, value in kwargs.items():
+            if key not in valid_keys:
                 raise ValueError(f"Invalid update criteria: {key}")
 
-        for key, value in kwargs.items():
-            setattr(user, key, value)
+            setattr(user_to_update, key, value)
 
         self.session.commit()
