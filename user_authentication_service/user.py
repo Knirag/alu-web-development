@@ -4,7 +4,7 @@
 This file defines a User model for a database table named 'users'.
 
 The User model represents a user in the system and stores relevant information
-such as email, hashed password (for security), session ID (for maintaining sessions),
+such as email, hashed password (for security), session ID (for maintaining),
 and reset token (for password resets).
 """
 
