@@ -5,10 +5,11 @@ This module provides a `DB` class for interacting with a database
 using Object-Relational Mapping (ORM).
 """
 
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engin
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import InvalidRequestError, NoResultFound
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 from typing import Dict
 
 from user import Base
