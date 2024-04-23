@@ -1,41 +1,31 @@
 #!/usr/bin/env python3
-
-"""
-This module provides a `DB` class for interacting with a database
-using Object-Relational Mapping (ORM).
+"""DB Module
 """
 
-from sqlalchemy import create_engin
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
-from typing import Dict
-
-from user import Base
-from user import User
+from user import Base, User
 
 
 class DB:
-    """
-    Represents a database connection and provides methods for interacting
-    with user data in the 'users' table.
+    """DB class
     """
 
     def __init__(self):
-        """
-        Initializes the database connection and creates all tables
-        if they don't already exist.
+        """Initializes a new DB instance
         """
         self._engine = create_engine("sqlite:///a.db", echo=False)
+        Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
 
     @property
-    def session(self):
-        """
-        Returns a database session object for interacting with data.
-        Creates a new session if one doesn't already exist.
+    def _session(self):
+        """Private memoized session method (object)
+        Never used outside DB class
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
@@ -43,75 +33,41 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """
-        Adds a new user to the database.
-
-        Args:
-            email (str): The user's email address.
-            hashed_password (str): The user's hashed password.
-
-        Returns:
-            User: The newly created user object.
+        """Add new user to database
+        Returns a User object
         """
         user = User(email=email, hashed_password=hashed_password)
-        self.session.add(user)
-        self.session.commit()
+        self._session.add(user)
+        self._session.commit()
         return user
 
-    def find_user_by(self, kwargs: Dict[str, str]) -> User:
+    def find_user_by(self, **kwargs) -> User:
+        """Returns first rrow found in users table
+        as filtered by methods input arguments
         """
-        Finds a user based on a dictionary of search criteria
-        matching user table columns.
-
-        Args:
-            kwargs (Dict[str, str]): A dictionary containing key-value pairs
-                where the key represents the user attribute and the value
-                represents the search value.
-
-        Returns:
-            User: The first user matching the provided criteria.
-
-        Raises:
-            InvalidRequestError: If no search criteria are provided.
-            ValueError: If an invalid search criterion is provided (not a user table column).
-            NoResultFound: If no user is found matching the criteria.
-        """
-        if not kwargs:
-            raise InvalidRequestError("No search criteria provided.")
-
-        valid_keys = {"id", "email", "hashed_password", "session_id", "reset_token"}
+        user_keys = ['id', 'email', 'hashed_password', 'session_id',
+                     'reset_token']
         for key in kwargs.keys():
-            if key not in valid_keys:
-                raise ValueError(f"Invalid search criteria: {key}")
+            if key not in user_keys:
+                raise InvalidRequestError
+        result = self._session.query(User).filter_by(**kwargs).first()
+        if result is None:
+            raise NoResultFound
+        return result
 
-        user = self.session.query(User).filter_by(**kwargs).first()
-
-        if user is None:
-            raise NoResultFound("No user found matching the criteria.")
-
-        return user
-
-    def update_user(self, user_id: int, kwargs: Dict[str, str]) -> None:
-        """
-        Updates a user's attributes based on the provided user ID and a dictionary
-        of key-value pairs representing the updates.
-
-        Args:
-            user_id (int): The ID of the user to update.
-            kwargs (Dict[str, str]): A dictionary containing key-value pairs
-                where the key represents the user attribute to update and the value
-                represents the new value.
-
-        Raises:
-            ValueError: If an invalid update criterion is provided (not a user table column).
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Use find_user_by to locate the user to update
+        Update user's attribute as passed in methods argument
+        Commit changes to database
+        Raises ValueError if argument does not correspond to user
+        attribute passed
         """
         user_to_update = self.find_user_by(id=user_id)
-
-        valid_keys = {"id", "email", "hashed_password", "session_id", "reset_token"}
+        user_keys = ['id', 'email', 'hashed_password', 'session_id',
+                     'reset_token']
         for key, value in kwargs.items():
-            if key not in valid_keys:
-                raise ValueError(f"Invalid update criteria: {key}")
-
-            setattr(user_to_update, key, value)
-
-        self.session.commit()
+            if key in user_keys:
+                setattr(user_to_update, key, value)
+            else:
+                raise ValueError
+        self._session.commit()
